@@ -7,15 +7,13 @@
 
 import SwiftUI
 
+// Este archivo ya no se usa como vista principal.
+// La aplicación usa CovidDashboardView como vista principal del dashboard.
+// Ver Presentation/Views/CovidDashboardView.swift
+
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        CovidDashboardView()
     }
 }
 

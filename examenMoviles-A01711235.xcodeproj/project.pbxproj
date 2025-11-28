@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BF16F4942ED9166300D2E08D /* FlowStacks in Frameworks */ = {isa = PBXBuildFile; productRef = BF16F4932ED9166300D2E08D /* FlowStacks */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		BF6DB5DC2ED8D0E6005AA33A /* examenMoviles-A01711235.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "examenMoviles-A01711235.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF16F4942ED9166300D2E08D /* FlowStacks in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = "examenMoviles-A01711235";
 			packageProductDependencies = (
+				BF16F4932ED9166300D2E08D /* FlowStacks */,
 			);
 			productName = "examenMoviles-A01711235";
 			productReference = BF6DB5DC2ED8D0E6005AA33A /* examenMoviles-A01711235.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = BF6DB5D32ED8D0E6005AA33A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BF16F4922ED9166300D2E08D /* XCRemoteSwiftPackageReference "FlowStacks" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BF6DB5DD2ED8D0E6005AA33A /* Products */;
 			projectDirPath = "";
@@ -328,6 +337,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BF16F4922ED9166300D2E08D /* XCRemoteSwiftPackageReference "FlowStacks" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johnpatrickmorgan/FlowStacks";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.12;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BF16F4932ED9166300D2E08D /* FlowStacks */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BF16F4922ED9166300D2E08D /* XCRemoteSwiftPackageReference "FlowStacks" */;
+			productName = FlowStacks;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BF6DB5D42ED8D0E6005AA33A /* Project object */;
 }
