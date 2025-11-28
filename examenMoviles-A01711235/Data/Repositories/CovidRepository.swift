@@ -70,12 +70,16 @@ class CovidRepository: CovidAPIProtocol {
             
             for date in sortedDates {
                 if let dayData = cases[date] {
-                    let record = CovidDailyRecord(
-                        date: date,
-                        totalCases: dayData.total,
-                        newCases: dayData.new
-                    )
-                    dailyRecords.append(record)
+                    // Solo incluir fechas con casos nuevos mayores a 0
+                    let newCases = dayData.new ?? 0
+                    if newCases > 0 {
+                        let record = CovidDailyRecord(
+                            date: date,
+                            totalCases: dayData.total,
+                            newCases: dayData.new
+                        )
+                        dailyRecords.append(record)
+                    }
                 }
             }
         }

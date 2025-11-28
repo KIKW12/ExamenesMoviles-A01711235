@@ -10,15 +10,15 @@ import Foundation
 // El API retorna un array donde cada elemento tiene el nombre del país
 // y un diccionario de fechas con los datos de cada día
 
-struct CovidCountryResponse: Codable {
-    var country: String
-    var region: String?
-    var cases: [String: CovidDayData]?
+struct CovidCountryResponse: Codable, Sendable {
+    let country: String
+    let region: String?
+    let cases: [String: CovidDayData]?
 }
 
-struct CovidDayData: Codable {
-    var total: Int?
-    var new: Int?
+struct CovidDayData: Codable, Sendable {
+    let total: Int?
+    let new: Int?
     
     enum CodingKeys: String, CodingKey {
         case total

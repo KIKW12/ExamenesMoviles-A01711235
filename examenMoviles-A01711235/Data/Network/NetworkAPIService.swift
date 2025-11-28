@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 
 class NetworkAPIService {
     static let shared = NetworkAPIService()
@@ -13,56 +14,72 @@ class NetworkAPIService {
     private let apiKey = "wLVPN1zV08lJYF7uXqgyPw==zVwp6TlVcAO1NLUf"
     private let baseURL = "https://api.api-ninjas.com/v1/covid19"
     
+    // Headers comunes para todas las peticiones
+    private var headers: HTTPHeaders {
+        [
+            "X-Api-Key": apiKey,
+            "Accept": "application/json"
+        ]
+    }
+    
     func getCovidData(country: String) async -> Result<[CovidCountryResponse], Error> {
         await getCovidData(country: country, date: nil)
     }
     
     func getCovidData(country: String, date: String?) async -> Result<[CovidCountryResponse], Error> {
-        // Construir URL con parámetros
-        var components = URLComponents(string: baseURL)!
-        var queryItems = [URLQueryItem(name: "country", value: country)]
+        // Construir parámetros
+        var parameters: [String: String] = ["country": country]
         
         if let date = date {
-            queryItems.append(URLQueryItem(name: "date", value: date))
+            parameters["date"] = date
         }
         
-        components.queryItems = queryItems
+        // Realizar petición con Alamofire
+        let response = await AF.request(
+            baseURL,
+            method: .get,
+            parameters: parameters,
+            headers: headers
+        )
+        .validate(statusCode: 200..<300)
+        .serializingData()
+        .response
         
-        guard let url = components.url else {
-            return .failure(NetworkError.invalidURL)
+        // Procesar respuesta
+        switch response.result {
+        case .success(let data):
+            do {
+                let decoded = try JSONDecoder().decode([CovidCountryResponse].self, from: data)
+                return .success(decoded)
+            } catch {
+                debugPrint("Error de decodificación: \(error)")
+                return .failure(NetworkError.decodingError)
+            }
+            
+        case .failure(let error):
+            debugPrint("Error de Alamofire: \(error)")
+            return .failure(mapAlamofireError(error, statusCode: response.response?.statusCode))
+        }
+    }
+    
+    // Mapear errores de Alamofire a NetworkError
+    private func mapAlamofireError(_ error: AFError, statusCode: Int?) -> NetworkError {
+        if let statusCode = statusCode {
+            if statusCode == 401 || statusCode == 403 {
+                return .unauthorized
+            }
+            return .serverError(statusCode)
         }
         
-        // Crear request con headers
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            // Verificar respuesta HTTP
-            guard let httpResponse = response as? HTTPURLResponse else {
-                return .failure(NetworkError.invalidResponse)
-            }
-            
-            guard (200...299).contains(httpResponse.statusCode) else {
-                if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
-                    return .failure(NetworkError.unauthorized)
-                }
-                return .failure(NetworkError.serverError(httpResponse.statusCode))
-            }
-            
-            // Decodificar respuesta
-            let decoded = try JSONDecoder().decode([CovidCountryResponse].self, from: data)
-            return .success(decoded)
-            
-        } catch let error as DecodingError {
-            debugPrint("Error de decodificación: \(error)")
-            return .failure(NetworkError.decodingError)
-        } catch {
-            debugPrint("Error de red: \(error.localizedDescription)")
-            return .failure(NetworkError.networkError(error.localizedDescription))
+        switch error {
+        case .invalidURL:
+            return .invalidURL
+        case .responseSerializationFailed:
+            return .decodingError
+        case .responseValidationFailed:
+            return .invalidResponse
+        default:
+            return .networkError(error.localizedDescription)
         }
     }
 }
